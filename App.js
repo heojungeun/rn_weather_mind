@@ -1,17 +1,17 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, ScrollView, Dimensions } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View, ScrollView, Dimensions } from 'react-native';
 import * as Location from 'expo-location';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window")
 
+const API_KEY = "dbc562a84ea4bd907d40900e32dfe298"
+// const API_KEY = "my api key"
 
 export default function App() {
   const [city, setCity] = useState("Loading...");
   const [days, setDays] = useState([]);
   const [ok, setOk] = useState(true);
-
-  const API_KEY = "";
 
   const getWeather = async() => {
     // 위치 권한요청
@@ -25,6 +25,9 @@ export default function App() {
       {useGoogleMaps: false}
     );
     setCity(location[0].city);
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&exclude=alerts&appid=${API_KEY}&units=metric`);
+    const json = await response.json();
+    setDays(json.daily);
   };
   useEffect(() => {
     getWeather();
@@ -39,22 +42,19 @@ export default function App() {
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.weather}>
-        <View style={styles.day}>
-          <Text style={styles.temp}>26</Text>
-          <Text style={styles.desc}>Sunny</Text>
-        </View>
-        <View style={styles.day}>
-          <Text style={styles.temp}>26</Text>
-          <Text style={styles.desc}>Sunny</Text>
-        </View>
-        <View style={styles.day}>
-          <Text style={styles.temp}>26</Text>
-          <Text style={styles.desc}>Sunny</Text>
-        </View>
-        <View style={styles.day}>
-          <Text style={styles.temp}>26</Text>
-          <Text style={styles.desc}>Sunny</Text>
-        </View>
+        {days.length === 0 ? (
+          <View style={styles.day}>
+            <ActivityIndicator color="white" size="large" />
+          </View> 
+          ) : (
+          days.map((day, index) => 
+            <View key={index} style={styles.day} >
+              <Text style={styles.temp}>{parseFloat(day.temp.day).toFixed(1)}</Text>
+              <Text style={styles.desc}>{day.weather[0].main}</Text>
+              <Text style={styles.mdesc}>{day.weather[0].description}</Text>
+            </View>
+          )
+        )}
       </ScrollView>
       <StatusBar style='light'></StatusBar>
     </View>
@@ -94,6 +94,11 @@ const styles = StyleSheet.create({
   desc: {
     fontSize: 60,
     marginTop: -30,
+    color: 'white',
+  },
+  mdesc: {
+    fontSize: 30,
+    marginTop: -10,
     color: 'white',
   },
 });
