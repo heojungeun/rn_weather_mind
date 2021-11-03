@@ -2,11 +2,23 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View, ScrollView, Dimensions } from 'react-native';
 import * as Location from 'expo-location';
+import { Ionicons, Fontisto } from '@expo/vector-icons';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window")
 
 const API_KEY = "dbc562a84ea4bd907d40900e32dfe298"
 // const API_KEY = "my api key"
+
+const icons = {
+  Clouds: "cloudy",
+  Clear: "day-sunny",
+  Rain: "rain",
+  Atmosphere: "cloudy-gusts",
+  Snow: "snow",
+  Rain: "rains",
+  Drizzle: "rain",
+  Thunderstorm: "lightning",
+}
 
 export default function App() {
   const [city, setCity] = useState("Loading...");
@@ -43,15 +55,20 @@ export default function App() {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.weather}>
         {days.length === 0 ? (
-          <View style={styles.day}>
+          <View style={{ ...styles.day, alignItems: "center"}}>
             <ActivityIndicator color="white" size="large" />
           </View> 
           ) : (
           days.map((day, index) => 
             <View key={index} style={styles.day} >
-              <Text style={styles.temp}>{parseFloat(day.temp.day).toFixed(1)}</Text>
-              <Text style={styles.desc}>{day.weather[0].main}</Text>
-              <Text style={styles.mdesc}>{day.weather[0].description}</Text>
+              <View style={styles.icons}>
+                <Fontisto name={icons[day.weather[0].main]} size={70} color="white" />
+              </View>
+              <View style={styles.weatherBox}>
+                <Text style={styles.temp}>{parseFloat(day.temp.day).toFixed(1)}</Text>
+                <Text style={styles.desc}>{day.weather[0].main}</Text>
+                <Text style={styles.mdesc}>{day.weather[0].description}</Text>
+              </View>
             </View>
           )
         )}
@@ -83,17 +100,23 @@ const styles = StyleSheet.create({
   },
   day: {
     width: SCREEN_WIDTH,
-    alignItems: 'center',
+    //alignItems: 'flex-start',
     // backgroundColor: "teal",
-    
+    paddingHorizontal: 50,
+  },
+  icons: {
+    alignItems: 'flex-end',
+  },
+  weatherBox: {
+    alignItems: 'flex-start',
   },
   temp: {
-    fontSize: 158,
+    fontSize: 118,
     color: 'white',
   },
   desc: {
-    fontSize: 60,
-    marginTop: -30,
+    fontSize: 40,
+    marginTop: -10,
     color: 'white',
   },
   mdesc: {
