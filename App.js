@@ -6,8 +6,7 @@ import { Ionicons, Fontisto } from '@expo/vector-icons';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window")
 
-const API_KEY = "dbc562a84ea4bd907d40900e32dfe298"
-// const API_KEY = "my api key"
+const API_KEY = "my api key"
 
 const icons = {
   Clouds: "cloudy",
